@@ -1,16 +1,23 @@
 auth:
   type: LOGIN_FORM
-
+  
 spring:
   security:
     user:
       name: admin
       password: admin
-
 kafka:
   clusters:
-    - bootstrapServers: kafka-0:9092,kafka-1:9092
-      name: kafka
-      metrics:
-        type: PROMETHEUS
-        port: 9404
+  - bootstrapServers: kafka-0:9092,kafka-1:9092
+    kafkaConnect:
+    - address: http://kafka-connect:8083
+      name: first
+    metrics:
+      port: 9404
+      type: PROMETHEUS
+    name: kafka
+    properties: {}
+    readOnly: false
+rbac:
+  roles: []
+webclient: {}

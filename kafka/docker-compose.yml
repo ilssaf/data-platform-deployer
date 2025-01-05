@@ -58,6 +58,7 @@ services:
     depends_on:
       - kafka-0
       - kafka-1
+      - kafka-connect
     networks:
       - kafka
     ports:
@@ -68,6 +69,30 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+
+  kafka-connect:
+    image: debezium/connect:3.0.0.Final
+    container_name: kafka-connect
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: "kafka-0:9092,kafka-1:9092"
+      GROUP_ID: "connect-cluster"
+      CONFIG_STORAGE_TOPIC: "connect-configs"
+      OFFSET_STORAGE_TOPIC: "connect-offsets"
+      STATUS_STORAGE_TOPIC: "connect-statuses"
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+    depends_on:
+      - kafka-0
+      - kafka-1
+    networks:
+      - kafka
+
 
   prometheus:
     image: prom/prometheus
