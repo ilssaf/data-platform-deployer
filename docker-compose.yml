@@ -164,7 +164,8 @@ services:
         - "5432:5432"               
       volumes:
         - postgres_data:/var/lib/postgresql/data
-      command: postgres -c 'wal_level=logical'
+        - ./postgresql:/etc/postgresql
+      command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
       networks:
         - kafka
 networks:
