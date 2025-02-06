@@ -153,6 +153,20 @@ services:
       retries: 3
       start_period: 10s
 
+  postgresql:
+      image: postgres:15
+      container_name: postgres
+      environment:
+        POSTGRES_USER: myuser       
+        POSTGRES_PASSWORD: mypassword 
+        POSTGRES_DB: mydatabase       
+      ports:
+        - "5432:5432"               
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      command: postgres -c 'wal_level=logical'
+      networks:
+        - kafka
 networks:
   kafka:
 
@@ -160,6 +174,8 @@ volumes:
   kafka_0_data:
     driver: local
   kafka_1_data:
+    driver: local
+  postgres_data:
     driver: local
   prom_data:
     driver: local
