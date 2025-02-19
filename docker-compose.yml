@@ -168,8 +168,49 @@ services:
       command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
       networks:
         - kafka
+  
+  spark-master:
+    build: 
+      context: ./spark
+      dockerfile: Dockerfile
+    image: spark-custom:latest
+    container_name: spark-master
+    hostname: spark-master
+    ports:
+      - "8080:8080" 
+      - "7077:7077"  
+    environment:
+      - SPARK_MODE=master
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+
+  spark-worker-1:
+    build: 
+      context: ./spark
+      dockerfile: Dockerfile
+    container_name: spark-worker-1
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+
+
+  spark-worker-2:
+    build:
+      context: ./spark
+      dockerfile: Dockerfile
+    container_name: spark-worker-2
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+
 networks:
   kafka:
+    driver: bridge
 
 volumes:
   kafka_0_data:
