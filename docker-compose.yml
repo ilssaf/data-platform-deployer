@@ -153,60 +153,20 @@ services:
       retries: 3
       start_period: 10s
 
-  postgresql:
-      image: postgres:15
-      container_name: postgres
-      environment:
-        POSTGRES_USER: myuser       
-        POSTGRES_PASSWORD: mypassword 
-        POSTGRES_DB: mydatabase       
-      ports:
-        - "5432:5432"               
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
-        - ./postgresql:/etc/postgresql
-      command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
-      networks:
-        - kafka
-  
-  spark-master:
-    build: 
-      context: ./spark
-      dockerfile: Dockerfile
-    image: spark-custom:latest
-    container_name: spark-master
-    hostname: spark-master
+  clickhose:
+    image: clickhouse/clickhouse-server
+    container_name: clickhouse
     ports:
-      - "8080:8080" 
-      - "7077:7077"  
+      - 18123:8123
+      - 19000:9000
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
     environment:
-      - SPARK_MODE=master
-    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
-
-  spark-worker-1:
-    build: 
-      context: ./spark
-      dockerfile: Dockerfile
-    container_name: spark-worker-1
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
-
-
-  spark-worker-2:
-    build:
-      context: ./spark
-      dockerfile: Dockerfile
-    container_name: spark-worker-2
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+      - CLICKHOUSE_DB=dwh
+      - CLICKHOUSE_USER=dwh
+      - CLICKHOUSE_PASSWORD=dwh
 
 networks:
   kafka:
