@@ -1,0 +1,133 @@
+{
+    "$schema": "http://schema-registry/schema#",
+    "type": "object",
+    "properties": {
+        "project": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "version": { "type": "string" },
+                "description": { "type": "string" }
+            },
+            "required": ["name", "version", "description"]
+        },
+        "sources": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string", "enum": ["postgres", "s3"] },
+                    "port": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "password": { "type": "string" },
+                    "access_key": { "type": "string" },
+                    "secret_key": { "type": "string" },
+                    "region": { "type": "string" },
+                    "bucket": { "type": "string" }
+                },
+                "required": ["name", "type"]
+            }
+        },
+        "streaming": {
+            "type": "object",
+            "properties": {
+                "kafka": {
+                    "type": "object",
+                    "properties": {
+                        "brokers": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                        }
+                    },
+                    "required": ["brokers"]
+                },
+                "connect": {
+                    "type": "object",
+                    "properties": {
+                        "url": { "type": "string" },
+                        "connectors": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "type": { "type": "string", "enum": ["debezium"] },
+                                    "sources": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "database.hostname": { "type": "string" },
+                                                "database.port": { "type": "integer" },
+                                                "database.user": { "type": "string" },
+                                                "database.password": { "type": "string" },
+                                                "database.dbname": { "type": "string" },
+                                                "database.server.name": { "type": "string" }
+                                            },
+                                            "required": ["database.hostname", "database.port", "database.user", "database.dbname", "database.server.name"]
+                                        }
+                                    },
+                                    "config": {
+                                        "type": "object",
+                                        "properties": {
+                                            "plugin.name": { "type": "string" }
+                                        },
+                                        "required": ["plugin.name"]
+                                    }
+                                },
+                                "required": ["name", "type", "sources", "config"]
+                            }
+                        }
+                    },
+                    "required": ["url", "connectors"]
+                }
+            }
+        },
+        "storage": {
+            "type": "object",
+            "properties": {
+                "clickhouse": {
+                    "type": "object",
+                    "properties": {
+                        "hosts": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                        },
+                        "tables": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "engine": { "type": "string", "enum": ["Kafka", "S3"] },
+                                    "kafka_topic": { "type": "string" },
+                                    "kafka_broker": { "type": "string" },
+                                    "s3_url": { "type": "string" },
+                                    "format": { "type": "string" }
+                                },
+                                "required": ["name", "engine", "format"]
+                            }
+                        }
+                    },
+                    "required": ["hosts", "tables"]
+                }
+            }
+        },
+        "bi": {
+            "type": "object",
+            "properties": {
+                "superset": {
+                    "type": "object",
+                    "properties": {
+                        "url": { "type": "string" },
+                        "username": { "type": "string" },
+                        "password": { "type": "string" }
+                    },
+                    "required": ["url", "username", "password"]
+                }
+            }
+        }
+    },
+    "required": ["project", "sources", "streaming", "storage", "bi"]
+}
