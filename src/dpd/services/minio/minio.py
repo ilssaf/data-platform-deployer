@@ -4,7 +4,8 @@ from dpd.models import S3 as Minio, Project
 class MinioService:
     @staticmethod
     def generate(project: Project, minio: Minio):
-        return {
+        return {"minio":
+            {
             "image": "minio/minio",
             "container_name": "minio",
             "ports": [f"{minio.port}:9000"],
@@ -14,4 +15,4 @@ class MinioService:
             },
             "volumes": [f"{minio.data_dir or 'minio_data'}:/data"],
             "networks": [f"{project.name}_network"],
-        }
+        }}

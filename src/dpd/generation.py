@@ -34,8 +34,8 @@ class DockerComposeGenerator:
         self.settings = {}
         self.networks = {f"{config.project.name}_network": {"driver": "bridge"}}
 
-    def add_service(self, name: str, service_data: Dict[str, Any]):
-        self.services[name] = service_data
+    def add_service(self, service_data: Dict[str, Any]):
+        self.services = self.services | service_data
 
     def add_settings(self, settings: Dict[str, Any]):
         self.settings = self.settings | settings
@@ -57,11 +57,11 @@ class DockerComposeGenerator:
         for source in self.config.sources:
             if isinstance(source, Postgres):
                 self.add_service(
-                    source.name, PostgresqlService.generate(self.config.project, source)
+                    PostgresqlService.generate(self.config.project, source)
                 )
             elif isinstance(source, S3):
                 self.add_service(
-                    source.name, MinioService.generate(self.config.project, source)
+                    MinioService.generate(self.config.project, source)
                 )
         if self.config.streaming.kafka:
             self.add_settings(
@@ -71,17 +71,14 @@ class DockerComposeGenerator:
             )
             for broker_id in range(self.config.streaming.kafka.num_brokers):
                 self.add_service(
-                    f"kafka-{broker_id}",
                     KafkaService.generate(broker_id),
                 )
             self.add_service(
-                "kafka-ui",
                 KafkaUIService.generate(
                     self.config.project, self.config.streaming.kafka
                 ),
             )
             self.add_service(
-                "kafka-connect",
                 KafkaConnectService.generate(
                     self.config.project, self.config.streaming.kafka
                 ),
@@ -90,15 +87,12 @@ class DockerComposeGenerator:
         if self.config.storage.clickhouse:
             clickhouse = self.config.storage.clickhouse
             self.add_service(
-                "clickhouse",
                 ClickHouseService.generate(self.config.project, clickhouse),
             )
 
         if self.config.bi.superset:
             superset = self.config.bi.superset
-            self.add_service(
-                "superset", SupersetService.generate(self.config.project, superset)
-            )
+            self.add_service(SupersetService.generate(self.config.project, superset))
 
         # for connector in self.config.streaming.connect.connectors:
         #     if isinstance(connector, DebeziumPostgresSourceConnector):
