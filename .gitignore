@@ -154,7 +154,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Airflow
 
-airflow/logs/
-airflow/plugins/
+examples/
+*.DS_Store
