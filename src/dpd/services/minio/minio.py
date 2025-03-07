@@ -1,4 +1,4 @@
-from src.dpd.models import S3 as Minio, Project
+from dpd.models import S3 as Minio, Project
 
 
 class MinioService:

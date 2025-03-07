@@ -1,5 +1,5 @@
 from turtle import st
-from src.dpd.models import Kafka, Project
+from dpd.models import Kafka, Project
 from typing import Dict, Any
 import os
 from pathlib import Path

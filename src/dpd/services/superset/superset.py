@@ -1,4 +1,4 @@
-from src.dpd.models import Project, Superset
+from dpd.models import Project, Superset
 
 
 class SupersetService:

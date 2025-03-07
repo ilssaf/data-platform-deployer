@@ -1,4 +1,4 @@
-from src.dpd.models import ClickHouse, Project
+from dpd.models import ClickHouse, Project
 
 
 class ClickHouseService:

@@ -1,8 +1,8 @@
 from pathlib import Path
 import yaml
 from typing import Dict, Any
-from src.dpd.services.kafka_ui.kafka_ui import KafkaUIService
-from src.dpd.models import (
+from dpd.services.kafka_ui.kafka_ui import KafkaUIService
+from dpd.models import (
     Postgres,
     S3,
     Kafka,
@@ -16,7 +16,7 @@ from src.dpd.models import (
     DebeziumPostgresSourceConnector,
     Superset,
 )
-from src.dpd.services import (
+from dpd.services import (
     PostgresqlService,
     MinioService,
     KafkaConnectService,

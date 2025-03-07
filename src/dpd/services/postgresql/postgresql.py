@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict
-from src.dpd.models import Postgres, Project
+from dpd.models import Postgres, Project
 import shutil
 import os
 
