@@ -22,10 +22,11 @@ def generate(config):
         if validate(config, "src/dpd/schema.json"):
             click.echo("💡 Configuration file is valid.")
             conf = load_config_from_file(config)
-
             dp = DPGenerator(conf)
+            click.echo("🚀 Generating configuration files...")
             dp.process_services()
             dp.generate()
+            click.echo("🚀 Configuration files generated.")
 
     else:
         click.echo("No configuration file provided. Using defaults...")
