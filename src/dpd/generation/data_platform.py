@@ -13,7 +13,6 @@ from dpd.models import (
     BI,
     StorageConfig,
     Streaming,
-    DebeziumPostgresSourceConnector,
     Superset,
 )
 from dpd.services import (
@@ -33,6 +32,7 @@ class DPGenerator:
         self.services = {}
         self.settings = {}
         self.networks = {f"{config.project.name}_network": {"driver": "bridge"}}
+        self.env = {}
 
     def add_service(self, service_data: Dict[str, Any]):
         self.services = self.services | service_data

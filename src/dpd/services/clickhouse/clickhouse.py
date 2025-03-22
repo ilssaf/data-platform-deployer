@@ -1,4 +1,5 @@
 from dpd.models import ClickHouse, Project
+from dpd.generation.secret import generate_password
 
 
 class ClickHouseService:
@@ -7,13 +8,13 @@ class ClickHouseService:
         return {
             "clickhouse": {
                 "image": "clickhouse/clickhouse-server",
-                "container_name": "clickhouse",
+                "container_name": ch.name,
                 "ports": [f"{ch.port}:8123", f"{ch.port + 1}:9000"],
                 "ulimits": {"nofile": {"soft": 262144, "hard": 262144}},
                 "enviroment": [
-                    f"CLICKHOUSE_DB={ch.database}",
-                    f"CLICKHOUSE_USER={ch.username}",
-                    f"CLICKHOUSE_PASSWORD={ch.password}",
+                    f"CLICKHOUSE_DB={ch.database or f'{ch.name}_db'}",
+                    f"CLICKHOUSE_USER={ch.username or f'{ch.name}_admin'}",
+                    f"CLICKHOUSE_PASSWORD={ch.password or generate_password()}",
                 ],
                 "networks": [f"{project.name}_network"],
             }

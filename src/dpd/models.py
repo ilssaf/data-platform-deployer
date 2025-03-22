@@ -3,6 +3,7 @@ from enum import StrEnum
 from typing import List, Dict, Optional, Any
 from dataclasses import dataclass
 import json
+from attr import field
 import yaml
 import jsonschema
 
@@ -109,13 +110,12 @@ class Source(ABC):
 
 @dataclass
 class RDBMS(ABC):
-    host: str
-    port: int
-    username: str
-    password: str
-    database: str
-    tables: List["Table"]
-
+    name: str
+    type: str
+    port: Optional[int] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    database: Optional[str] = None
 
 @dataclass
 class Table(ABC):
@@ -125,24 +125,18 @@ class Table(ABC):
 
 @dataclass
 class Postgres(Source, RDBMS):
-    name: str
-    type: str
-    port: int
-    username: str
-    password: str
-    database: str
-    tables: List[Table]
+    type: str = field(default="postgres")
 
 
 @dataclass
 class S3(Source):
     name: str
-    type: str
-    access_key: str
-    secret_key: str
-    region: str
-    bucket: str
-    port: str
+    type: str = field(default="s3")
+    access_key: Optional[str] = None
+    secret_key: Optional[str] = None
+    region: Optional[str] = field(default="us-east-1")
+    bucket: Optional[str] = None
+    port: Optional[int] = None
     data_dir: Optional[str] = None
 
 
@@ -150,33 +144,9 @@ class S3(Source):
 class Kafka:
     num_brokers: int
 
-
-@dataclass
-class KafkaConnector(ABC):
-    pass
-
-
-@dataclass
-class DebeziumSourceConnector(KafkaConnector):
-    name: str
-    type: str
-    config: Dict[str, str]
-
-
-@dataclass
-class DebeziumPostgresSourceConnector(DebeziumSourceConnector):
-    database_hostname: str
-    database_port: int
-    database_user: str
-    database_password: str
-    database_dbname: str
-    database_server_name: str
-
-
 @dataclass
 class KafkaConnect:
-    url: str
-    connectors: List[KafkaConnector]
+    name: str
 
 
 @dataclass
@@ -209,7 +179,7 @@ class ClickHouseTable(Table):
 
 @dataclass
 class ClickHouse(RDBMS):
-    tables: List[ClickHouseTable]
+    type: str = field(default="clickhouse")
 
 
 @dataclass
@@ -219,10 +189,10 @@ class StorageConfig:
 
 @dataclass
 class Superset:
-    url: str
-    username: str
-    password: str
-    port: str
+    name: str
+    username: Optional[str] = None
+    password: Optional[str] = None
+    port: Optional[str] = None
 
 
 @dataclass
