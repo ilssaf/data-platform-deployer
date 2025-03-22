@@ -21,7 +21,7 @@ class PostgresqlService:
     ) -> Dict[str, Any]:
         return {
             psql_conf.name: {
-                "image": "postgres:15",  # TODO: сделать возможность менять версию, пользовательский ввод
+                "image": "postgres:15",
                 "container_name": psql_conf.name,
                 "enviroment": {
                     "POSTGRES_USER": psql_conf.username or f"{psql_conf.name}_admin",
