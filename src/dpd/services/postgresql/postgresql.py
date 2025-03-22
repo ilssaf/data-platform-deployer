@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict
 from dpd.models import Postgres, Project
+from dpd.generation.secret import generate_password
 import shutil
 import os
 
@@ -19,18 +20,18 @@ class PostgresqlService:
         project: Project, psql_conf: Postgres
     ) -> Dict[str, Any]:
         return {
-            psql_conf.host: {
+            psql_conf.name: {
                 "image": "postgres:15",  # TODO: сделать возможность менять версию, пользовательский ввод
-                "container_name": psql_conf.host,
+                "container_name": psql_conf.name,
                 "enviroment": {
-                    "POSTGRES_USER": psql_conf.username,
-                    "POSTGRES_PASSWORD": psql_conf.password,
-                    "POSTGRES_DB": psql_conf.database,
+                    "POSTGRES_USER": psql_conf.username or f"{psql_conf.name}_admin",
+                    "POSTGRES_PASSWORD": psql_conf.password or generate_password(),
+                    "POSTGRES_DB": psql_conf.database or f"{psql_conf.name}_db",
                 },
-                "ports": [f"{psql_conf.port}:5432"],
+                "ports": [f"{psql_conf.port or 5432}:5432"],
                 "volumes": [
-                    f"{psql_conf.host}:/var/lib/postgresql/data",
-                    f"./{psql_conf.host}/postgresql.conf:/etc/postgresql/postgresql.conf",
+                    f"{psql_conf.name}:/var/lib/postgresql/data",
+                    f"./{psql_conf.name}/postgresql.conf:/etc/postgresql/postgresql.conf",
                 ],
                 "command": "postgres -c 'config_file=/etc/postgresql/postgresql.conf'",
                 "networks": [f"{project.name}_network"],
@@ -40,6 +41,6 @@ class PostgresqlService:
     @staticmethod
     def generate(project_conf: Project, psql_conf: Postgres) -> Dict[str, Any]:
         PostgresqlService.generate_conf_file(
-            Path(f"{project_conf.name}/{psql_conf.host}")
+            Path(f"{project_conf.name}/{psql_conf.name}")
         )
         return PostgresqlService.generate_docker_service(project_conf, psql_conf)

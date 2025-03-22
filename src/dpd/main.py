@@ -1,5 +1,5 @@
 from dpd.models import load_config_from_file, validate
-from dpd.generation import DPGenerator
+from dpd.generation.data_platform import DPGenerator
 import click
 
 

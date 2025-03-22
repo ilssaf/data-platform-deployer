@@ -40,42 +40,9 @@
                 "connect": {
                     "type": "object",
                     "properties": {
-                        "url": { "type": "string" },
-                        "connectors": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "name": { "type": "string" },
-                                    "type": { "type": "string", "enum": ["debezium"] },
-                                    "sources": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "database.hostname": { "type": "string" },
-                                                "database.port": { "type": "integer" },
-                                                "database.user": { "type": "string" },
-                                                "database.password": { "type": "string" },
-                                                "database.dbname": { "type": "string" },
-                                                "database.server.name": { "type": "string" }
-                                            },
-                                            "required": ["database.hostname", "database.port", "database.user", "database.dbname", "database.server.name"]
-                                        }
-                                    },
-                                    "config": {
-                                        "type": "object",
-                                        "properties": {
-                                            "plugin.name": { "type": "string" }
-                                        },
-                                        "required": ["plugin.name"]
-                                    }
-                                },
-                                "required": ["name", "type", "sources", "config"]
-                            }
-                        }
+                        "name": { "type": "string" }
                     },
-                    "required": ["url", "connectors"]
+                    "required": ["name"]
                 }
             }
         },
@@ -85,24 +52,9 @@
                 "clickhouse": {
                     "type": "object",
                     "properties": {
-                        "host": {"type": "string"},
-                        "tables": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "name": { "type": "string" },
-                                    "engine": { "type": "string", "enum": ["Kafka", "S3"] },
-                                    "kafka_topic": { "type": "string" },
-                                    "kafka_broker": { "type": "string" },
-                                    "s3_url": { "type": "string" },
-                                    "format": { "type": "string" }
-                                },
-                                "required": ["name", "engine", "format"]
-                            }
-                        }
+                        "name": {"type": "string"}
                     },
-                    "required": ["host", "tables"]
+                    "required": ["name"]
                 }
             }
         },
@@ -112,11 +64,11 @@
                 "superset": {
                     "type": "object",
                     "properties": {
-                        "url": { "type": "string" },
+                        "name": { "type": "string" },
                         "username": { "type": "string" },
                         "password": { "type": "string" }
                     },
-                    "required": ["url", "username", "password"]
+                    "required": ["name"]
                 }
             }
         }
