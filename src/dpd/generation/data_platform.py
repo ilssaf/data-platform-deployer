@@ -78,7 +78,13 @@ class DPGenerator:
             )
             self.add_service(
                 KafkaConnectService.generate(
-                    self.config.project, self.config.streaming.kafka
+                    self.config.project,
+                    self.config.streaming.kafka,
+                    [
+                        source
+                        for source in self.config.sources
+                        if isinstance(source, Postgres)
+                    ],
                 ),
             )
 
@@ -91,24 +97,6 @@ class DPGenerator:
         if self.config.bi.superset:
             superset = self.config.bi.superset
             self.add_service(SupersetService.generate(self.config.project, superset))
-
-        # for connector in self.config.streaming.connect.connectors:
-        #     if isinstance(connector, DebeziumPostgresSourceConnector):
-        #         self.add_service(
-        #             connector.name,
-        #             {
-        #                 "image": "debezium/connect",
-        #                 "environment": {
-        #                     "DATABASE_HOSTNAME": connector.database_hostname,
-        #                     "DATABASE_PORT": str(connector.database_port),
-        #                     "DATABASE_USER": connector.database_user,
-        #                     "DATABASE_PASSWORD": connector.database_password,
-        #                     "DATABASE_DBNAME": connector.database_dbname,
-        #                     "DATABASE_SERVER_NAME": connector.database_server_name,
-        #                 },
-        #                 "ports": ["8084:8083"],
-        #             },
-        #         )
 
 
 def generate_docker_compose(config: Config) -> str:
