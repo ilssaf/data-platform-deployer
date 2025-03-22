@@ -1,5 +1,5 @@
-from dpd.models import load_config_from_json
-from dpd.generation import DockerComposeGenerator
+from dpd.models import load_config_from_file, validate
+from dpd.generation import DPGenerator
 import click
 
 
@@ -18,10 +18,14 @@ def main():
 def generate(config):
     """Generate configuration files for the data platform"""
     if config:
-        click.echo(f"Generating configurations from {config}...")
-        gen = DockerComposeGenerator(load_config_from_json(config))
-        gen.process_services()
-        gen.generate()
+        click.echo("💡 Validating configuration file...")
+        if validate(config, "src/dpd/schema.json"):
+            click.echo("💡 Configuration file is valid.")
+            conf = load_config_from_file(config)
+
+            dp = DPGenerator(conf)
+            dp.process_services()
+            dp.generate()
 
     else:
         click.echo("No configuration file provided. Using defaults...")

@@ -34,13 +34,8 @@
             "properties": {
                 "kafka": {
                     "type": "object",
-                    "properties": {
-                        "brokers": {
-                            "type": "array",
-                            "items": { "type": "string" }
-                        }
-                    },
-                    "required": ["brokers"]
+                    "properties": {"num_brokers": {"type": "integer"}},
+                    "required": ["num_brokers"]
                 },
                 "connect": {
                     "type": "object",
@@ -90,10 +85,7 @@
                 "clickhouse": {
                     "type": "object",
                     "properties": {
-                        "hosts": {
-                            "type": "array",
-                            "items": { "type": "string" }
-                        },
+                        "host": {"type": "string"},
                         "tables": {
                             "type": "array",
                             "items": {
@@ -110,7 +102,7 @@
                             }
                         }
                     },
-                    "required": ["hosts", "tables"]
+                    "required": ["host", "tables"]
                 }
             }
         },

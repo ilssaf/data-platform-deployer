@@ -27,7 +27,7 @@ from dpd.services import (
 import os
 
 
-class DockerComposeGenerator:
+class DPGenerator:
     def __init__(self, config: Config):
         self.config = config
         self.services = {}
@@ -60,9 +60,7 @@ class DockerComposeGenerator:
                     PostgresqlService.generate(self.config.project, source)
                 )
             elif isinstance(source, S3):
-                self.add_service(
-                    MinioService.generate(self.config.project, source)
-                )
+                self.add_service(MinioService.generate(self.config.project, source))
         if self.config.streaming.kafka:
             self.add_settings(
                 KafkaService.generate_settings(
@@ -114,6 +112,6 @@ class DockerComposeGenerator:
 
 
 def generate_docker_compose(config: Config) -> str:
-    generator = DockerComposeGenerator(config)
+    generator = DPGenerator(config)
     generator.process_services()
     return generator.generate()
