@@ -1,7 +1,6 @@
 from pathlib import Path
 import yaml
 from typing import Dict, Any
-from dpd.services.kafka_ui.kafka_ui import KafkaUIService
 from dpd.models import (
     Postgres,
     S3,
@@ -22,6 +21,9 @@ from dpd.services import (
     ClickHouseService,
     SupersetService,
     KafkaService,
+    ReadmeService,
+    KafkaUIService
+
 )
 import os
 
@@ -97,6 +99,8 @@ class DPGenerator:
         if self.config.bi.superset:
             superset = self.config.bi.superset
             self.add_service(SupersetService.generate(self.config.project, superset))
+        
+        ReadmeService.generate_file(self.config)
 
 
 def generate_docker_compose(config: Config) -> str:
