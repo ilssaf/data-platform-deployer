@@ -33,3 +33,4 @@ twine==6.1.0
 typing_extensions==4.12.2
 urllib3==2.3.0
 zipp==3.21.0
+directory-tree==1.0.0
