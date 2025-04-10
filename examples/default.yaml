@@ -1,0 +1,24 @@
+project:
+  name: data-platform-2
+  version: 1.0.0
+  description: This is a test projec
+sources:
+  - type: postgres
+    name: postgres_1
+  - type: postgres
+    name: postgres_2
+  - type: s3
+    name: s3_1
+streaming:
+  kafka:
+    num_brokers: 3
+  connect:
+    name: connect-1
+storage:
+  clickhouse:
+    name: clickhouse-1 
+    port: 1234 # generate
+bi:
+  superset:
+    name: superset-1 
+    port: 8088 
