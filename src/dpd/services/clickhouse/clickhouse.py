@@ -11,7 +11,7 @@ class ClickHouseService:
                 "container_name": ch.name,
                 "ports": [f"{ch.port}:8123", f"{ch.port + 1}:9000"],
                 "ulimits": {"nofile": {"soft": 262144, "hard": 262144}},
-                "enviroment": [
+                "environment": [
                     f"CLICKHOUSE_DB={ch.database or f'{ch.name}_db'}",
                     f"CLICKHOUSE_USER={ch.username or f'{ch.name}_admin'}",
                     f"CLICKHOUSE_PASSWORD={ch.password or generate_password()}",

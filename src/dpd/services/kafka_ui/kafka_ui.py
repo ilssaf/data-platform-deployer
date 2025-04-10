@@ -42,10 +42,10 @@ class KafkaUIService:
     def generate_docker_service(project: Project, kafka: Kafka) -> Dict[str, Any]:
         return {
             "kafka-ui": {
-                "image": "image: provectuslabs/kafka-ui:latest",
+                "image": "provectuslabs/kafka-ui:latest",
                 "container_name": "kafka-ui",
                 "ports": ["8080:8080"],
-                "volumes": [".kafka-ui/config.yml:/etc/kafkaui/dynamic_config.yaml"],
+                "volumes": ["./kafka-ui/config.yml:/etc/kafkaui/dynamic_config.yaml"],
                 "depends_on": [f"kafka-{i}" for i in range(kafka.num_brokers)],
                 "environment": {
                     "DYNAMIC_CONFIG_ENABLED": "true",

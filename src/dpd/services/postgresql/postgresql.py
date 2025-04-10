@@ -23,14 +23,14 @@ class PostgresqlService:
             psql_conf.name: {
                 "image": "postgres:15",
                 "container_name": psql_conf.name,
-                "enviroment": {
+                "environment": {
                     "POSTGRES_USER": psql_conf.username or f"{psql_conf.name}_admin",
                     "POSTGRES_PASSWORD": psql_conf.password or generate_password(),
                     "POSTGRES_DB": psql_conf.database or f"{psql_conf.name}_db",
                 },
                 "ports": [f"{psql_conf.port or 5432}:5432"],
                 "volumes": [
-                    f"{psql_conf.name}:/var/lib/postgresql/data",
+                    f"{psql_conf.name}_data:/var/lib/postgresql/data",
                     f"./{psql_conf.name}/postgresql.conf:/etc/postgresql/postgresql.conf",
                 ],
                 "command": "postgres -c 'config_file=/etc/postgresql/postgresql.conf'",

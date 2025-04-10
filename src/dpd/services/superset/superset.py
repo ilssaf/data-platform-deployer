@@ -10,7 +10,7 @@ class SupersetService:
                 "image": "apache/superset",
                 "container_name": superset.name,
                 "ports": [f"{superset.port or 8088}:8088"],
-                "enviroment": {
+                "environment": {
                     "ADMIN_PASSWORD": superset.password or generate_password(),
                     "ADMIN_USER": superset.username or f"{superset.name}_admin",
                 },
