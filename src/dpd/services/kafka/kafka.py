@@ -1,27 +1,26 @@
 from dpd.models import Kafka, Project
 from typing import Dict, Any
+from dpd.enums import ServiceType
 
 
 class KafkaService:
+    type = ServiceType.KAFKA
+
     @staticmethod
-    def generate_settings(project_conf: Project, kafka_conf: Kafka) -> Dict[str, Any]:
+    def generate_settings(project: Project, kafka_conf: Kafka) -> Dict[str, Any]:
         return {
             "kafka-common": {
                 "image": "bitname/kafka:latest",
                 "ports": ["9092"],
                 "healthcheck": {
-                    "test": [
-                        "bash",
-                        "-c",
-                        'printf "" > /dev/tcp/127.0.0.1/9092; exit $$?;',
-                    ],
+                    "test": "bash -c printf  > /dev/tcp/127.0.0.1/9092; exit $$?;",
                     "interval": "5s",
                     "timeout": "10s",
                     "retries": 3,
                     "start_period": "30s",
                 },
                 "restart": "unless-stopped",
-                "networks": [f"{project_conf.name}_network"],
+                "networks": [f"{project.name}_network"],
             },
             "kafka-env-common": {
                 "ALLOW_PLAINTEXT_LISTENER": "yes",
@@ -39,25 +38,22 @@ class KafkaService:
 
     @staticmethod
     def generate(
-        project_conf: Project, kafka_conf: Kafka, broker_id: int
+        project: Project, kafka_conf: Kafka, broker_id: int
     ) -> Dict[str, Any]:
         return {
             f"kafka-{broker_id}": {
-                "image": "bitname/kafka:latest",
+                "container_name": f"{project.name}__kafka-{broker_id}".replace("-","_"),
+                "image": "bitnami/kafka:latest",
                 "ports": ["9092"],
                 "healthcheck": {
-                    "test": [
-                        "bash",
-                        "-c",
-                        'printf "" > /dev/tcp/127.0.0.1/9092; exit $$?;',
-                    ],
+                    "test": 'bash -c printf "" > /dev/tcp/127.0.0.1/9092; exit $$?;',
                     "interval": "5s",
                     "timeout": "10s",
                     "retries": 3,
                     "start_period": "30s",
                 },
                 "restart": "unless-stopped",
-                "networks": [f"{project_conf.name}_network"],
+                "networks": [f"{project.name}_network"],
                 "environment": {
                     "ALLOW_PLAINTEXT_LISTENER": "yes",
                     "KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE": "true",
@@ -68,7 +64,7 @@ class KafkaService:
                     "KAFKA_CFG_PROCESS_ROLES": "controller,broker",
                     "KAFKA_CFG_CONTROLLER_LISTENER_NAMES": "CONTROLLER",
                     "KAFKA_CFG_LISTENERS": "PLAINTEXT://:9092,CONTROLLER://:9093",
-                    "KAFKA_BROKER_ID": broker_id,
+                    "KAFKA_CFG_NODE_ID": broker_id,
                 },
             }
         }

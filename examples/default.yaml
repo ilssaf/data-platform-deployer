@@ -1,7 +1,7 @@
 project:
-  name: data-platform-2
+  name: data-platform-7
   version: 1.0.0
-  description: This is a test projec
+  description: This is a test project
 sources:
   - type: postgres
     name: postgres_1
@@ -17,8 +17,6 @@ streaming:
 storage:
   clickhouse:
     name: clickhouse-1 
-    port: 1234 # generate
 bi:
   superset:
     name: superset-1 
-    port: 8088 

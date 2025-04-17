@@ -1,6 +1,7 @@
 from pathlib import Path
 import yaml
 from typing import Dict, Any
+from dpd.generation.port_manager import PortManager
 from dpd.models import (
     Postgres,
     S3,
@@ -29,6 +30,7 @@ import os
 
 class DPGenerator:
     def __init__(self, config: Config):
+        self.__pm = PortManager()
         self.config = config
         self.services = {}
         self.settings = {}
@@ -99,8 +101,7 @@ class DPGenerator:
             )
 
         if self.config.bi.superset:
-            superset = self.config.bi.superset
-            self.add_service(SupersetService.generate(self.config.project, superset))
+            self.add_service(SupersetService.generate(self.config))
 
         ReadmeService.generate_file(self.config)
 
