@@ -1,6 +1,7 @@
 from pathlib import Path
 import yaml
 from typing import Dict, Any
+from dpd.generation.port_manager import PortManager
 from dpd.models import (
     Postgres,
     S3,
@@ -22,14 +23,14 @@ from dpd.services import (
     SupersetService,
     KafkaService,
     ReadmeService,
-    KafkaUIService
-
+    KafkaUIService,
 )
 import os
 
 
 class DPGenerator:
     def __init__(self, config: Config):
+        self.__pm = PortManager()
         self.config = config
         self.services = {}
         self.settings = {}
@@ -48,6 +49,7 @@ class DPGenerator:
             "version": "3.8",
             **self.settings,
             "services": self.services,
+            "volumes": self._generate_volumes(self.config),
             "networks": self.networks,
         }
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
@@ -64,14 +66,16 @@ class DPGenerator:
             elif isinstance(source, S3):
                 self.add_service(MinioService.generate(self.config.project, source))
         if self.config.streaming.kafka:
-            self.add_settings(
-                KafkaService.generate_settings(
-                    self.config.project, self.config.streaming.kafka
-                )
-            )
+            # self.add_settings(
+            #     KafkaService.generate_settings(
+            #         self.config.project, self.config.streaming.kafka
+            #     )
+            # )
             for broker_id in range(self.config.streaming.kafka.num_brokers):
                 self.add_service(
-                    KafkaService.generate(broker_id),
+                    KafkaService.generate(
+                        self.config.project, self.config.streaming.kafka, broker_id
+                    ),
                 )
             self.add_service(
                 KafkaUIService.generate(
@@ -97,10 +101,15 @@ class DPGenerator:
             )
 
         if self.config.bi.superset:
-            superset = self.config.bi.superset
-            self.add_service(SupersetService.generate(self.config.project, superset))
-        
+            self.add_service(SupersetService.generate(self.config))
+
         ReadmeService.generate_file(self.config)
+
+    def _generate_volumes(self, conf: Config) -> Dict[str, Any]:
+        src_volumes = {}
+        for src in conf.sources:
+            src_volumes[f"{src.name}_data"] = {"driver": "local"}
+        return src_volumes
 
 
 def generate_docker_compose(config: Config) -> str:
