@@ -5,6 +5,8 @@ import os
 import json
 from dpd.enums import ServiceType
 
+from dpd.generation.secret import env_manager
+
 
 class KafkaConnectService:
     type = ServiceType.KAFKA_CONNECT
@@ -62,10 +64,12 @@ class KafkaConnectService:
                     "slot.name": "debezium_slot",
                     "publication.name": "debezium",
                     "database.hostname": source.name,
-                    "database.port": "<port>",
-                    "database.user": "<username>",
-                    "database.password": source.password,
-                    "database.dbname": source.database,
+                    "database.port": 5432,
+                    "database.user": env_manager.get_secret(source.name, "user"),
+                    "database.password": env_manager.get_secret(
+                        source.name, "password"
+                    ),
+                    "database.dbname": env_manager.get_secret(source.name, "db"),
                     "topic.prefix": source.name,
                     "time.precision.mode": "connect",
                     "plugin.name": "pgoutput",
@@ -78,21 +82,3 @@ class KafkaConnectService:
             )
             with open(target_path / f"{source.name}_dbz_conf.json", "w") as f:
                 f.write(json.dumps(dbz_conf, indent=4))
-"""
-{
-  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-  "database.user": "postgres_1_admin",
-  "database.dbname": "postgres_1_db",
-  "slot.name": "debezium_slot",
-  "publication.name": "debezium",
-  "plugin.name": "pgoutput",
-  "key.converter.schemas.enable": "false",
-  "topic.prefix": "psql-1",
-  "database.hostname": "postgres_1",
-  "database.password": "nN8Wm6GKhTpxA5m1",
-  "value.converter.schemas.enable": "false",
-  "name": "psql-1",
-  "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-  "key.converter": "org.apache.kafka.connect.json.JsonConverter"
-}
-"""

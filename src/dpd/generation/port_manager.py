@@ -16,7 +16,16 @@ class PortManager:
 
     def add_port(self, service_id: str, service_type: ServiceType) -> int:
         port = self.__conf[service_type].pop(0)
-        self.__port2serivice[port] = service_id
+        if service_id not in self.__port2serivice:
+            self.__port2serivice[service_id] = [port]
+        else:
+            self.__port2serivice[service_id].append(port)
         return port
-    
-port_manager= PortManager()
+
+    def get_ports(self, service_id: str):
+        if service_id not in self.__port2serivice:
+            return []
+        return self.__port2serivice[service_id]
+
+
+port_manager = PortManager()

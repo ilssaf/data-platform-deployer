@@ -25,6 +25,7 @@ from dpd.services import (
     ReadmeService,
     KafkaUIService,
 )
+from dpd.generation.secret import env_manager
 import os
 
 
@@ -66,11 +67,6 @@ class DPGenerator:
             elif isinstance(source, S3):
                 self.add_service(MinioService.generate(self.config.project, source))
         if self.config.streaming.kafka:
-            # self.add_settings(
-            #     KafkaService.generate_settings(
-            #         self.config.project, self.config.streaming.kafka
-            #     )
-            # )
             for broker_id in range(self.config.streaming.kafka.num_brokers):
                 self.add_service(
                     KafkaService.generate(
@@ -104,6 +100,7 @@ class DPGenerator:
             self.add_service(SupersetService.generate(self.config))
 
         ReadmeService.generate_file(self.config)
+        env_manager.generate_env_file(self.config)
 
     def _generate_volumes(self, conf: Config) -> Dict[str, Any]:
         src_volumes = {}
