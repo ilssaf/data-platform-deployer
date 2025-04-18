@@ -47,7 +47,6 @@ class DPGenerator:
     def generate(self) -> str:
         target_path = Path(f"{self.config.project.name}/docker-compose.yml")
         compose_dict = {
-            "version": "3.8",
             **self.settings,
             "services": self.services,
             "volumes": self._generate_volumes(self.config),

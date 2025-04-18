@@ -18,6 +18,7 @@ class EnvManager:
     def generate_env_file(self, conf: Config) -> None:
         env = ""
         for service, service_sercets in self.__services2secrets.items():
+            env += f"# Enviroment Variables for service {service}\n"
             for k, v in service_sercets.items():
                 env += f"{service}__{k}".replace("-", "_").upper() + f"={v}\n"
 
