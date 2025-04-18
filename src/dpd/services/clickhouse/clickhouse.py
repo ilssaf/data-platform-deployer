@@ -1,7 +1,6 @@
 from dpd.models import ClickHouse, Project
-from dpd.generation.secret import generate_password
+from dpd.generation.secret import generate_password, env_manager
 from dpd.enums import ServiceType
-from dpd.generation.secret import env_manager
 
 
 class ClickHouseService:
