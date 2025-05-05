@@ -33,3 +33,31 @@ class MinioService:
                 "networks": [f"{project.name}_network"],
             }
         }
+
+    @staticmethod
+    def generate_minio_init(project: Project, minio: Minio):
+        return {
+            "minio_init": {
+                "image": "minio/mc:latest",
+                "container_name": f"{project.name}__minio_init".replace("-", "_"),
+                "depends_on": ["minio"],
+                "environment": {
+                    "MINIO_ROOT_USER": f"${{{minio.name}__ACCESS_KEY}}".replace(
+                        "-", "_"
+                    ).upper(),
+                    "MINIO_ROOT_PASSWORD": f"${{{minio.name}__SECRET_KEY}}".replace(
+                        "-", "_"
+                    ).upper(),
+                    "BUCKET_NAME": "kafka-topics"
+                },
+                "entrypoint": f'''
+                /bin/sh -c "
+        sleep 10
+        mc config host add local http://minio:9000 {env_manager.get_secret(minio.name, "access_key")} {env_manager.get_secret(minio.name, "secret_key")} 
+        mc mb local/kafka-topics || echo 'Bucket already exists'
+        exit 0;
+      "
+''',
+                "networks": [f"{project.name}_network"],
+            }
+        }

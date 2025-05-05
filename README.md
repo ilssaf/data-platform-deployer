@@ -20,6 +20,34 @@ dpd --help
 ```
 Generate configuration files
 ```sh 
-dpd generate --config config.json
+dpd generate --config config.yaml
+```
+
+Example config:
+```yaml
+project:
+  name: data-platform
+  version: 1.0.0
+  description: This is a test project
+sources:
+  - type: postgres
+    name: postgres_1
+  - type: postgres
+    name: postgres_2
+  - type: s3
+    name: s3_1
+streaming:
+  kafka:
+    num_brokers: 3
+  connect:
+    name: connect-1
+storage:
+  clickhouse:
+    name: clickhouse-1 
+bi:
+  superset:
+    name: superset-1 
+
+
 ```
 
