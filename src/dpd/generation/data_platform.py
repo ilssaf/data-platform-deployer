@@ -57,6 +57,7 @@ class DPGenerator:
                 )
             elif isinstance(source, S3):
                 self.add_service(MinioService.generate(self.config.project, source))
+                self.add_service(MinioService.generate_minio_init(self.config.project, source))
         if self.config.streaming.kafka:
             for broker_id in range(self.config.streaming.kafka.num_brokers):
                 self.add_service(
@@ -73,12 +74,11 @@ class DPGenerator:
                 KafkaConnectService.generate(
                     self.config.project,
                     self.config.streaming.kafka,
-                    [
-                        source
-                        for source in self.config.sources
-                        if isinstance(source, Postgres)
-                    ],
+                    self.config.sources,
                 ),
+            )
+            self.add_service(
+                KafkaConnectService.generate_config_loader_service(self.config.project)
             )
 
         if self.config.storage.clickhouse:
