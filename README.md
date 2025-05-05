@@ -11,7 +11,7 @@
 ## 🚀 Installation
 Install from **PyPI**:
 ```sh
-pip install dpd
+pip install data-platfrom-deployer
 ```
 ## 📝 Usage
 Once installed, you can run dpd from the command line:
