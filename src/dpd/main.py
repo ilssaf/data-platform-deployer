@@ -1,6 +1,7 @@
 from dpd.models import load_config_from_file, validate
 from dpd.generation.data_platform import DPGenerator
 import click
+import os
 
 
 @click.group()
@@ -19,7 +20,9 @@ def generate(config):
     """Generate configuration files for the data platform"""
     if config:
         click.echo("💡 Validating configuration file...")
-        if validate(config, "src/dpd/schema.json"):
+        if validate(
+            config, os.path.join(os.path.dirname(__file__), "schema.json")
+        ):
             click.echo("💡 Configuration file is valid.")
             conf = load_config_from_file(config)
             dp = DPGenerator(conf)

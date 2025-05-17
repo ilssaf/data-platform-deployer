@@ -17,7 +17,7 @@ class PostgresqlService:
     def generate_conf_file(target_path: Path) -> None:
         os.makedirs(os.path.dirname(target_path / "postgresql.conf"), exist_ok=True)
         shutil.copyfile(
-            "src/dpd/services/postgresql/postgresql.conf",
+            os.path.join(os.path.dirname(__file__), "postgresql.conf"),
             target_path / "postgresql.conf",
         )
 

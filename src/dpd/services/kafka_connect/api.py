@@ -19,9 +19,9 @@ def create_kafka_connector(url: str, config: Dict[str, Any], retries: int = 10) 
             )
             response.raise_for_status()
             return response.json()
-        except ConnectionError as e:
+        except Exception as e:
             print("Connection erorr, sleep 10 seconds...")
-            sleep(10)
+            sleep(20)
 
 
 def read_configs_from_dir(dir_path: Path) -> List[Dict[str, Any]]:

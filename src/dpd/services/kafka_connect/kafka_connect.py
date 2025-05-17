@@ -96,7 +96,7 @@ class KafkaConnectService:
             Path(f"{project.name}/kafka_connect/plugins"),
         )
         move_file(
-            "src/dpd/services/kafka_connect/api.py", f"{project.name}/kafka_connect"
+            os.path.join(os.path.dirname(__file__), "api.py"), f"{project.name}/kafka_connect"
         )
         return KafkaConnectService.generate_docker_service(project, kafka)
 

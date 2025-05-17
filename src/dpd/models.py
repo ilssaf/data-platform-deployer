@@ -6,6 +6,7 @@ import json
 from attr import field
 import yaml
 import jsonschema
+import os
 
 
 def _validate_json(json_path: str, schema_path: str) -> bool:
@@ -20,7 +21,13 @@ def _validate_json(json_path: str, schema_path: str) -> bool:
         return False
     return True
 
-def _validate_yaml(yaml_path: str, schema_path: str = 'schema.json') -> bool:
+
+def _validate_yaml(
+    yaml_path: str,
+    schema_path: str = os.path.join(
+        os.path.dirname(__file__), "src", "dpd", "schema.json"
+    ),
+) -> bool:
     with open(yaml_path, "r") as f:
         conf_dict = yaml.safe_load(f)
     with open(schema_path, "r") as f:
@@ -31,6 +38,7 @@ def _validate_yaml(yaml_path: str, schema_path: str = 'schema.json') -> bool:
         print(f"🚨 Validation error: {e.message}")
         return False
     return True
+
 
 def validate(file_path: str, schema_path: str) -> bool:
     if file_path.endswith(".json"):
@@ -117,6 +125,7 @@ class RDBMS(ABC):
     password: Optional[str] = None
     database: Optional[str] = None
 
+
 @dataclass
 class Table(ABC):
     name: str
@@ -143,6 +152,7 @@ class S3(Source):
 @dataclass
 class Kafka:
     num_brokers: int
+
 
 @dataclass
 class KafkaConnect:
