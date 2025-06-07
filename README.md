@@ -8,6 +8,18 @@
 - 🛠 **Flexible configuration** via JSON.
 - 🏗 **Supports Docker Compose** and (future) Kubernetes.
 
+
+## 🌐 Web UI (REPL)
+Try dpd in your browser without installation:  
+👉 [**DPD Playground (Streamlit UI)**](https://trydpd.streamlit.app)
+
+
+## 🏗 Architecture
+Here's the high-level component diagram of what dpd can deploy:
+
+![Diagram](images/diagram_components.png)
+
+
 ## 🚀 Installation
 Install from **PyPI**:
 ```sh
